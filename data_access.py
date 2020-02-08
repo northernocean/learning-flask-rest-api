@@ -1,6 +1,6 @@
 import sqlite3
 
-class DB:
+class DAL:
     
     DB_PATH = "/home/david/udemy-current/data.db"
 

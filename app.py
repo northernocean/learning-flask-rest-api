@@ -5,9 +5,9 @@ from datetime import timedelta
 
 from security import authenticate, identity
 
-from user import UserRegister
-from item import Item
-from item_list import ItemList
+from resources.user_register import UserRegister
+from resources.item import Item
+from resources.item_list import ItemList
 
 app = Flask(__name__)
 app.secret_key = "david"

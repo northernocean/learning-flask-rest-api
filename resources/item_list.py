@@ -1,18 +1,18 @@
 import sqlite3
 from flask_restful import Resource
 from flask_jwt import jwt_required
-from db import DB
+from data_access import DAL
 
 class ItemList(Resource):
 
     def get(self):
         
-        db = DB()
-        connection, cursor = DB.get_connection_read_only()
+        db = DAL()
+        connection, cursor = DAL.get_connection_read_only()
         cmd = "select * from items"
         result = cursor.execute(cmd)
         rows = result.fetchall()
-        DB.close_connection_read_only(connection)
+        DAL.close_connection_read_only(connection)
         
         if rows:
             items = []
