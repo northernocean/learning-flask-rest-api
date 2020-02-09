@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_restful import Api, Resource
 from flask_jwt import JWT
+from db import db
 from datetime import timedelta
 
 from security import authenticate, identity
@@ -11,10 +12,12 @@ from resources.item_list import ItemList
 
 app = Flask(__name__)
 app.secret_key = "david"
-api = Api(app)
-
 app.config["JWT_EXPIRATION_DELTA"] = timedelta(seconds=1800)
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+api = Api(app)
 jwt = JWT(app, authenticate, identity)
+db.init_app(app)
 
 # -------------------------------------------------
 # A simple example of how this works...
