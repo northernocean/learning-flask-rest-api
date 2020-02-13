@@ -9,35 +9,24 @@ class UserModel(db.Model):
     username = db.Column(db.String(200))
     password = db.Column(db.String(200))
 
-    def __init__(self, _id, username, password):
-        self.id = _id
+    def __init__(self, user_id, username, password):
+        self.id = user_id
         self.username = username
         self.password = password
 
+    def save_to_db(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def json(self):
+        return {"id": self.id, "username": self.username, "password":self.password}
+    
     @classmethod
     def find_by_username(cls, username):
+        return cls.query.filter_by(username=username).first()
 
-        connection, cursor = DAL.get_connection_read_only()
-        cmd = "select * from users where username = ?"
-        result = cursor.execute(cmd, (username,))
-        row = result.fetchone()
-        DAL.close_connection_read_only(connection)
-        if row:
-            user = cls(*row)
-        else:
-            user = None
-        return user
 
     @classmethod
-    def find_by_id(cls, username):
-
-        connection, cursor = DAL.get_connection_read_only()
-        cmd = "select * from users where id = ?"
-        result = cursor.execute(cmd, (username,))
-        row = result.fetchone()
-        DAL.close_connection_read_only(connection)
-        if row:
-            user = cls(*row)
-        else:
-            user = None
-        return user
+    def find_by_id(cls, user_id):
+        return cls.query.filter_by(id=user_id).first()
+    

@@ -11,60 +11,35 @@ class ItemModel(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String(200))
     price = db.Column(db.Float(precision=2))
+    store_id = db.Column(db.Integer, db.ForeignKey("stores.id"))
+    store = db.relationship("StoreModel")
 
-    def __init__(self, name, price):
-        self.name = name
-        self.price = price
-    
     verbose = True
     
-    def json(self):
-        return {"name": self.name, "price": self.price}
+    def __init__(self, name, price, store_id):
+        self.name = name
+        self.price = price
+        self.store_id = store_id
 
-    
+    def json(self):
+        return ( 
+            {
+                "name": self.name,
+                "price": self.price,
+                "store_id": self.store_id
+            })
+
     @classmethod
     def find_by_name(cls, name):
-        connection, cursor = DAL.get_connection_read_only()
-        cmd = "select * from items where name = ?"
-        result = cursor.execute(cmd, (name,))
-        row = result.fetchone()
-        DAL.close_connection_read_only(connection)
+        return cls.query.filter_by(name=name).first()
+   
+    def save_to_db(self):
+        db.session.add(self)
+        db.session.commit()
 
-        if row:
-            return cls(*row)
-        else:
-            return None
-    
-
-    def insert(self):
-        
-        connection, cursor = DAL.get_connection()
-        cmd = "insert into items values (?, ?)"
-        cursor.execute(cmd, (self.name,self.price))
-        DAL.close_connection(connection, True)
-        
-        ItemModel.debug_view_items()
-
-
-    def update(self):
-        
-        connection, cursor = DAL.get_connection()
-        cmd = "update items set price = ? where name = ?"
-        cursor.execute(cmd, (self.price, self.name))
-        DAL.close_connection(connection, True)
-        
-        ItemModel.debug_view_items()
-
-    
-    def delete(self):
-        
-        connection, cursor = DAL.get_connection()
-        cmd = "delete from items where name = ?"
-        cursor.execute(cmd, (self.name,))
-        DAL.close_connection(connection, True)
-        
-        ItemModel.debug_view_items()
-
+    def delete_from_db(self):
+        db.session.delete(self)
+        db.session.commit()
 
     @classmethod
     def debug_view_items(cls):
@@ -78,4 +53,3 @@ class ItemModel(db.Model):
 
             for row in rows:
                 print(row)
-        

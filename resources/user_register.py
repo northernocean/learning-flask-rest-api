@@ -19,14 +19,9 @@ class UserRegister(Resource):
 
     def post(self):
         data = UserRegister.parser.parse_args()
-        
         if UserModel.find_by_username(data["username"]):
             return {"error":"username already exists."}, 400
         else:
-            connection, cursor = DAL.get_connection()
-            query = "insert into users values (null, ?, ?)"
-            cursor.execute(query, (data["username"], data["password"]))
-            DAL.close_connection(connection, True)
-        return {"message":"User created successfully"}, 201
-
-
+            user = UserModel(None, **data)
+            user.save_to_db()
+            return {"message":"User created successfully"}, 201

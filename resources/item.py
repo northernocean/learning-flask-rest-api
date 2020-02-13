@@ -31,6 +31,11 @@ class Item(Resource):
         required=True,
         help="This field cannot be left blank"
     )
+    parser.add_argument("store_id",
+        type=float,
+        required=True,
+        help="store_id is required"
+    )
 
     # --------------
     # public methods
@@ -45,44 +50,40 @@ class Item(Resource):
         else:
             return {"message":"Item not found"}, 404
     
-    
     def post(self, name):
         
         if ItemModel.find_by_name(name) is not None:
             return {"error": "Item already exists."}, 400
         else:
-            parser = Item.parser
-            data = parser.parse_args()
-            item = ItemModel(name, data["price"])
-            item.insert()
+            data = Item.parser.parse_args()
+            item = ItemModel(name, **data)
+            item.save_to_db()
 
             ItemModel.debug_view_items()
 
             return item.json(), 200
 
-    
     def put(self, name):
             
-        parser = Item.parser
-        data = parser.parse_args()
+        data = Item.parser.parse_args()
 
         item = ItemModel.find_by_name(name)
         
         if item is None:
-            item.insert()
+            item = ItemModel(name, data["price"], data["store_id"])
+            item.save_to_db()
         else:
             item.price = data["price"]
-            item.update()
+            item.store_id = data["store_id"]
+        
+        item.save_to_db()
 
         return item.json(), 200
 
-
     def delete(self, name):
-        
         item = ItemModel.find_by_name(name)
-        
         if item is not None:    
-            item.delete()
+            item.delete_from_db()
             return {"message":"Item deleted"}, 200
         else:
             return {"message":"Item not found"}, 400
