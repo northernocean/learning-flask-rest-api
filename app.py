@@ -24,8 +24,7 @@ jwt = JWT(app, authenticate, identity)
 
 @app.before_first_request
 def create_tables():
-    pass
-    #db.create_all()
+    db.create_all()
 
 # -------------------------------------------------
 # A simple example of how this works...
