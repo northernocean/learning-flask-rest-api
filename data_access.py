@@ -2,7 +2,7 @@ import sqlite3
 
 class DAL:
     
-    DB_PATH = "/home/david/udemy-current/data.db"
+    DB_PATH = "data.db"
 
 
     @classmethod
