@@ -11,6 +11,7 @@ from resources.item import Item
 from resources.item_list import ItemList
 from resources.store import Store
 from resources.store_list import StoreList
+from db import db
 
 app = Flask(__name__)
 app.secret_key = "david"
@@ -18,11 +19,11 @@ app.config["JWT_EXPIRATION_DELTA"] = timedelta(seconds=1800)
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:////home/david/udemy-current/data.db"
 api = Api(app)
+jwt = JWT(app, authenticate, identity)
+
 @app.before_first_request
 def create_tables():
     db.create_all()
-jwt = JWT(app, authenticate, identity)
-db.init_app(app)
 
 # -------------------------------------------------
 # A simple example of how this works...
@@ -41,5 +42,4 @@ api.add_resource(Store, "/store/<string:name>")
 api.add_resource(StoreList, "/stores")
 api.add_resource(UserRegister, "/register")
 
-if __name__ == "__main__":
-    app.run()
+db.init_app(app)
