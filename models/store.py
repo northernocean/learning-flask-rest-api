@@ -13,7 +13,7 @@ class StoreModel(db.Model):
     items = db.relationship("ItemModel")
     #items = db.relationship("ItemModel", lazy="dynamic")
 
-    verbose = True
+    verbose = False
     
     def __init__(self, name):
         self.name = name
