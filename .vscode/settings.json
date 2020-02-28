@@ -1,0 +1,4 @@
+{
+    "python.pythonPath": "/home/david/miniconda3/envs/flask/bin/python",
+    "python.linting.pylintArgs": ["--load-plugins", "pylint-flask"]
+}

@@ -19,6 +19,7 @@ app.secret_key = "david"
 app.config["JWT_EXPIRATION_DELTA"] = timedelta(seconds=1800)
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SQLALCHEMY_DATABASE_URI"] = environ.get("DATABASE_URL","sqlite:///data.db")
+app.config["PROPAGATE_EXCEPTIONS"] = True
 api = Api(app)
 jwt = JWT(app, authenticate, identity)
 
