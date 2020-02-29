@@ -7,7 +7,7 @@ from datetime import timedelta
 
 from security import authenticate, identity
 
-from resources.user_register import UserRegister
+from resources.user import User, UserRegister
 from resources.item import Item
 from resources.item_list import ItemList
 from resources.store import Store
@@ -43,5 +43,6 @@ api.add_resource(ItemList, "/items")
 api.add_resource(Store, "/store/<string:name>")
 api.add_resource(StoreList, "/stores")
 api.add_resource(UserRegister, "/register")
+api.add_resource(User, "/user/<int:user_id>")
 
 db.init_app(app)
