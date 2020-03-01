@@ -1,6 +1,6 @@
 import sqlite3
 from flask_restful import Resource, reqparse
-from flask_jwt import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt_claims, fresh_jwt_required
 from data_access import DAL
 from models.item import ItemModel
 verbose = False
@@ -41,7 +41,7 @@ class Item(Resource):
     # public methods
     # --------------
     
-    @jwt_required()
+    @jwt_required
     def get(self, name):
         #item = next(filter(lambda p: p["name"] == name, items), None)
         item = ItemModel.find_by_name(name)
@@ -50,6 +50,7 @@ class Item(Resource):
         else:
             return {"message":"Item not found"}, 404
     
+    @fresh_jwt_required
     def post(self, name):
         
         if ItemModel.find_by_name(name) is not None:
@@ -79,8 +80,12 @@ class Item(Resource):
         item.save_to_db()
 
         return item.json(), 200
-
+    
+    @jwt_required
     def delete(self, name):
+        claims = get_jwt_claims()
+        if not claims["is_admin"]:
+            return {"message":"Permission denied."}, 401
         item = ItemModel.find_by_name(name)
         if item is not None:    
             item.delete_from_db()
